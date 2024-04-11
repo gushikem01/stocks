@@ -1,8 +1,8 @@
 defmodule StocksWeb.PageController do
   use StocksWeb, :controller
+  use Ecto.Schema
 
-  # alias Ecto.Query.Builder.OrderBy
-  alias Ecto.Query.Builder.OrderBy
+  import Ecto.Query, only: [limit: 2]
   alias Stocks.Stock
   alias Stocks.Repo
 
@@ -11,12 +11,11 @@ defmodule StocksWeb.PageController do
     # The home page is often custom made,
     # so skip the default app layout.
     stocks = Stock
-      |> Repo.all(
-        order_by: [asc: :market_cap]
-      )
+      |> limit(10)
+      |> Repo.all()
       |> Enum.sort_by(& &1.market_cap, &>=/2)
-      |> Enum.take(10)
-    render(conn, :home, layout: false, stocks: stocks)
+
+      render(conn, :home, layout: false, stocks: stocks)
   end
 
 end
